@@ -1,0 +1,6 @@
+build:
+  commands:
+    - npm install
+start:
+  commands:
+    - node src/app.js
