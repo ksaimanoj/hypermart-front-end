@@ -10,6 +10,7 @@ router.get('/', (req, res) => {
     res.send('Welcome to Hyper Mart!');
 });
 
+
 router.get('/db-test', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -18,5 +19,32 @@ router.get('/db-test', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+const path = require('path');
+
+// Serve the sales HTML page
+router.get('/sales', (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/sales.html'));
+});
+
+// API endpoint to get sales data as JSON
+router.get('/api/sales', async (req, res) => {
+  try {
+    const result = await pool.query('select date, sum(sr.total_item_price ) from sale_record sr group by date order by date desc;');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// router.get('/sales', async (req, res) => {
+//   try {
+//     const result = await pool.query('select date, sum(sr.total_item_price ) from sale_record sr group by date order by date desc;');
+//     res.json(result.rows);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 module.exports = router;
