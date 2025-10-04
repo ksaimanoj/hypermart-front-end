@@ -5,8 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sales Records</title>
   <link rel="stylesheet" href="/views/sales.css">
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="/views/sales.js" defer></script>
 </head>
 <body>
+  <h2>Sales Chart</h2>
+  <div id="chart"></div>
   <h2>Sales Records</h2>
   <div id="table-container">Loading...</div>
   <script>
@@ -19,48 +23,4 @@
         }
         // Find columns where not all values are null
         let columns = Object.keys(rows[0]);
-        columns = columns.filter(col => {
           // Remove columns where all values are null or (for date columns) null/empty
-          if (/date/i.test(col)) {
-            return rows.some(row => row[col]);
-          }
-          return rows.some(row => row[col] !== null && row[col] !== undefined);
-        });
-
-        let html = '<table><thead><tr>';
-        columns.forEach(col => {
-          html += `<th>${col.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}`;
-          if (/date/i.test(col)) html += ' <span style="font-weight:400; font-size:0.9em;">(Day)</span>';
-          html += '</th>';
-        });
-        html += '</tr></thead><tbody>';
-        rows.forEach(row => {
-          html += '<tr>';
-          columns.forEach(col => {
-            let value = row[col];
-            // Format date columns and add day
-            if (/date/i.test(col) && value) {
-              try {
-                const d = new Date(value);
-                value = d.toLocaleDateString();
-                const day = d.toLocaleDateString(undefined, { weekday: 'long' });
-                value += ` <span style='color:#1976d2;font-size:0.95em;'>(${day})</span>`;
-              } catch {}
-            }
-            // Format amount columns
-            else if (/sum|amount|total|price/i.test(col) && typeof value === 'number') {
-              value = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            }
-            html += `<td>${value === null || value === undefined ? '' : value}</td>`;
-          });
-          html += '</tr>';
-        });
-        html += '</tbody></table>';
-        document.getElementById('table-container').innerHTML = html;
-      })
-      .catch(err => {
-        document.getElementById('table-container').innerHTML = `<pre>${err}</pre>`;
-      });
-  </script>
-</body>
-</html>
