@@ -12,15 +12,7 @@
   <h2>Sales Chart</h2>
   <div id="chart"></div>
   <h2>Sales Records</h2>
-  <div id="table-container">Loading...</div>
-  <script>
-    fetch('/api/sales')
-      .then(res => res.json())
-      .then(rows => {
-        if (!rows.length) {
-          document.getElementById('table-container').innerHTML = '<p>No sales records found.</p>';
-          return;
-        }
-        // Find columns where not all values are null
-        let columns = Object.keys(rows[0]);
-          // Remove columns where all values are null or (for date columns) null/empty
+  <table id="sales-table">
+    <thead id="sales-thead"></thead>
+    <tbody id="sales-tbody"></tbody>
+  </table>

@@ -38,6 +38,22 @@ router.get('/api/sales', async (req, res) => {
   }
 });
 
+// Serve the daywise sales HTML page
+router.get('/daywise_sales', (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/daywise_sales.html'));
+});
+
+// API endpoint to get daywise sales data as JSON
+router.get('/api/daywise_sales', async (req, res) => {
+  const { date } = req.query;
+  try {
+    const result = await pool.query('SELECT * FROM sale_record WHERE date = $1 ORDER BY id DESC', [date]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // router.get('/sales', async (req, res) => {
 //   try {
 //     const result = await pool.query('select date, sum(sr.total_item_price ) from sale_record sr group by date order by date desc;');
