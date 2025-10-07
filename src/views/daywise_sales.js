@@ -48,7 +48,7 @@ if (!date) {
           }
           // Format amount columns
           else if (/price|amount|total/i.test(col) && typeof value === 'number') {
-            value = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            value = value.toLocaleString(undefined, {   maximumFractionDigits: 2 });
           }
           td.textContent = value === null || value === undefined ? '' : value;
           tr.appendChild(td);

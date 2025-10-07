@@ -47,7 +47,7 @@ router.get('/daywise_sales', (req, res) => {
 router.get('/api/daywise_sales', async (req, res) => {
   const { date } = req.query;
   try {
-    const result = await pool.query('SELECT * FROM sale_record WHERE date = $1 ORDER BY id DESC', [date]);
+    const result = await pool.query('SELECT item_name, sum(total_item_price) as total_sales, count(*) as count FROM sale_record WHERE date = $1 group by item_code, item_name ORDER BY 2 desc;', [date]);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
