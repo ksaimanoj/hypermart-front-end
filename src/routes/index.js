@@ -46,7 +46,7 @@ router.get('/api/sales', async (req, res) => {
       params.push(end_date);
     }
     query += ' GROUP BY date ORDER BY date DESC;';
-  console.log('SALES QUERY:', query, params);
+  // console.log('SALES QUERY:', query, params);
   const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {

@@ -64,12 +64,17 @@ function fetchSalesData(startDate, endDate) {
                 markers: { size: 4 },
             };
 
-            // Calculate total sales sum and update total-sales div
-            const totalSales = chartRows.reduce((acc, row) => acc + (parseFloat(row["sum"]) || 0), 0);
-            const totalSalesDiv = document.getElementById('total-sales');
-            if (totalSalesDiv) {
-                totalSalesDiv.textContent = `Total Sales: ${totalSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
-            }
+                // Calculate total and average sales, update respective divs
+                const totalSales = chartRows.reduce((acc, row) => acc + (parseFloat(row["sum"]) || 0), 0);
+                const averageSales = chartRows.length ? totalSales / chartRows.length : 0;
+                const totalSalesDiv = document.getElementById('total-sales');
+                if (totalSalesDiv) {
+                    totalSalesDiv.textContent = `Total : ${totalSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+                }
+                const averageSalesDiv = document.getElementById('average-sales');
+                if (averageSalesDiv) {
+                    averageSalesDiv.textContent = `Average : ${averageSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+                }
             // Destroy previous chart if exists
             if (window.salesChart) window.salesChart.destroy();
             window.salesChart = new ApexCharts(document.querySelector("#chart"), chartOptions);
@@ -185,8 +190,6 @@ function fetchCategorySalesData(startDate, endDate) {
                 showBtn.id = 'show-all-categories-btn';
                 showBtn.textContent = 'Show All Categories';
                 showBtn.style.margin = '8px 0';
-                const table = document.getElementById('category-sales-table');
-                table.parentNode.insertBefore(showBtn, table);
             }
 
             if (!rows.length) {
@@ -223,6 +226,12 @@ function fetchCategorySalesData(startDate, endDate) {
             renderRows(10);
             showBtn.style.display = rows.length > 10 ? 'inline-block' : 'none';
             showBtn.textContent = 'Show All Categories';
+
+            // Append button to end of table
+            const table = document.getElementById('category-sales-table');
+            if (table && showBtn && !table.parentNode.contains(showBtn)) {
+                table.parentNode.appendChild(showBtn);
+            }
 
             // Optionally, display total category sales somewhere
             let totalDiv = document.getElementById('total-category-sales');
