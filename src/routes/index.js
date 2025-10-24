@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
@@ -47,6 +48,30 @@ router.get('/api/sales', async (req, res) => {
     query += ' GROUP BY date ORDER BY date DESC;';
   console.log('SALES QUERY:', query, params);
   const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API endpoint to get category sales data as JSON
+router.get('/api/category_sales', async (req, res) => {
+  try {
+    const { start_date, end_date } = req.query;
+    let query = 'SELECT category_name, sum(total_item_price) as total_sales FROM sale_record';
+    const params = [];
+    if (start_date && end_date) {
+      query += ' WHERE date BETWEEN $1 AND $2';
+      params.push(start_date, end_date);
+    } else if (start_date) {
+      query += ' WHERE date >= $1';
+      params.push(start_date);
+    } else if (end_date) {
+      query += ' WHERE date <= $1';
+      params.push(end_date);
+    }
+    query += ' GROUP BY category_name ORDER BY total_sales DESC;';
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });

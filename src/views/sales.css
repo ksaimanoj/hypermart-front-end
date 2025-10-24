@@ -1,3 +1,103 @@
+/* Section demarcation styles */
+.section {
+  background: #f4f7fb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+  margin-bottom: 32px;
+  padding: 24px 18px 18px 18px;
+  border-left: 6px solid #1976d2;
+  position: relative;
+}
+.section:not(:last-child)::after {
+  content: "";
+  display: block;
+  height: 0;
+  border-bottom: 2px dashed #90caf9;
+  margin: 28px 0 0 0;
+}
+/* Date range filter styles */
+.date-range-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 24px 0;
+}
+
+.date-range-container label {
+  font-weight: 500;
+  color: #333;
+  margin-right: 4px;
+}
+
+.date-range-container input[type="date"] {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8f8f8;
+  transition: border-color 0.2s;
+}
+.date-range-container input[type="date"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+#filter-btn {
+  padding: 7px 18px;
+  background: linear-gradient(90deg, #007bff 60%, #00c6ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#filter-btn:hover {
+  background: linear-gradient(90deg, #0056b3 60%, #00aaff 100%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* Category button styles */
+#show-all-categories-btn {
+  padding: 7px 18px;
+  background: linear-gradient(90deg, #ff9800 60%, #ffc107 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#show-all-categories-btn:hover {
+  background: linear-gradient(90deg, #f57c00 60%, #ffb300 100%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+/* Responsive table layout */
+.tables-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.table-block {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .tables-container {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+  .table-block {
+    width: 50%;
+  }
+}
 table {
   border-collapse: collapse;
   width: 100%;

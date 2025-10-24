@@ -9,19 +9,41 @@
   <script src="/views/sales.js" defer></script>
 </head>
 <body>
-  <div style="margin: 16px 0;">
-    <label for="start-date">Start Date:</label>
-    <input type="date" id="start-date" name="start-date">
-    <label for="end-date" style="margin-left:8px;">End Date:</label>
-    <input type="date" id="end-date" name="end-date">
-    <button id="filter-btn" style="margin-left:8px;">Filter</button>
+  <div class="section">
+    <div class="date-range-container">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" name="start-date">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" name="end-date">
+      </div>
+    </div>
   </div>
-  <h2>Sales Chart</h2>
-  <div id="chart"></div>
-  <div id=""></div>
-  
-  <h2>Sales Records</h2>
-  <table id="sales-table">
-    <thead id="sales-thead"></thead>
-    <tbody id="sales-tbody"></tbody>
-  </table>
+  <div class="section">
+    <h2>Sales Chart</h2>
+    <div id="chart"></div>
+    <div id=""></div>
+  </div>
+  <div class="section">
+    <h2>Total Sales</h2>
+    <div id="total-sales"></div>
+  </div>
+  <div class="section">
+    <div class="tables-container">
+      <div class="table-block">
+        <h2>Category Sales</h2>
+        <table id="category-sales-table">
+          <thead id="category-sales-thead"></thead>
+          <tbody id="category-sales-tbody"></tbody>
+        </table>
+      </div>
+      <div class="table-block">
+        <h2>Sales Records</h2>
+        <table id="sales-table">
+          <thead id="sales-thead"></thead>
+          <tbody id="sales-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
