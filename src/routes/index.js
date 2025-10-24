@@ -31,7 +31,22 @@ router.get('/sales', (req, res) => {
 // API endpoint to get sales data as JSON
 router.get('/api/sales', async (req, res) => {
   try {
-    const result = await pool.query('select date, sum(sr.total_item_price ) from sale_record sr group by date order by date desc;');
+    const { start_date, end_date } = req.query;
+    let query = 'SELECT date, sum(sr.total_item_price) as sum FROM sale_record sr';
+    const params = [];
+    if (start_date && end_date) {
+      query += ' WHERE date BETWEEN $1 AND $2';
+      params.push(start_date, end_date);
+    } else if (start_date) {
+      query += ' WHERE date >= $1';
+      params.push(start_date);
+    } else if (end_date) {
+      query += ' WHERE date <= $1';
+      params.push(end_date);
+    }
+    query += ' GROUP BY date ORDER BY date DESC;';
+  console.log('SALES QUERY:', query, params);
+  const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });

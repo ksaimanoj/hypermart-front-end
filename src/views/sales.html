@@ -9,8 +9,17 @@
   <script src="/views/sales.js" defer></script>
 </head>
 <body>
+  <div style="margin: 16px 0;">
+    <label for="start-date">Start Date:</label>
+    <input type="date" id="start-date" name="start-date">
+    <label for="end-date" style="margin-left:8px;">End Date:</label>
+    <input type="date" id="end-date" name="end-date">
+    <button id="filter-btn" style="margin-left:8px;">Filter</button>
+  </div>
   <h2>Sales Chart</h2>
   <div id="chart"></div>
+  <div id=""></div>
+  
   <h2>Sales Records</h2>
   <table id="sales-table">
     <thead id="sales-thead"></thead>
