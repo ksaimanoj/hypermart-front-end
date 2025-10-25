@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
@@ -58,7 +57,8 @@ router.get('/api/sales', async (req, res) => {
 router.get('/api/category_sales', async (req, res) => {
   try {
     const { start_date, end_date } = req.query;
-    let query = 'SELECT category_name, sum(total_item_price) as total_sales FROM sale_record';
+    let query = 'select i.category as category_name, sum(sr.quantity) as quantity, sum(sr.total_item_price ) / sum(sr.quantity) as price, sum(sr.total_item_price ) as total_sales';
+    query += ' from sale_record sr inner join items i on sr.item_code::integer = i.item_id';    
     const params = [];
     if (start_date && end_date) {
       query += ' WHERE date BETWEEN $1 AND $2';
@@ -70,7 +70,7 @@ router.get('/api/category_sales', async (req, res) => {
       query += ' WHERE date <= $1';
       params.push(end_date);
     }
-    query += ' GROUP BY category_name ORDER BY total_sales DESC;';
+    query += ' GROUP BY i.category ORDER BY total_sales DESC;';
     const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
@@ -82,7 +82,8 @@ router.get('/api/category_sales', async (req, res) => {
 router.get('/api/category_sales_by_date', async (req, res) => {
   try {
     const { start_date, end_date, category_name } = req.query;
-    let query = 'SELECT category_name, date, sum(total_item_price) as total_sales FROM sale_record';
+    let query = 'select sr.item_code, sr.item_name, sum(sr.quantity) as quantity, sum(sr.total_item_price ) / sum(sr.quantity) as price, sum(sr.total_item_price ) as total_sales';
+    query += ' from sale_record sr inner join items i on sr.item_code::integer = i.item_id';
     const params = [];
     let whereClauses = [];
     let paramIdx = 1;
@@ -100,16 +101,26 @@ router.get('/api/category_sales_by_date', async (req, res) => {
       paramIdx += 1;
     }
     if (category_name) {
-      whereClauses.push(`category_name = $${paramIdx}`);
+      whereClauses.push(`i.category = $${paramIdx}`);
       params.push(category_name);
       paramIdx += 1;
     }
     if (whereClauses.length) {
       query += ' WHERE ' + whereClauses.join(' AND ');
     }
-    query += ' GROUP BY category_name, date ORDER BY date DESC, category_name;';
+    query += ' GROUP BY i.category,sr.item_name, sr.item_code ORDER BY total_sales DESC;';
     // console.log('CATEGORY SALES BY DATE QUERY:', query, params);
     const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API endpoint to fetch list of available categories from items table
+router.get('/api/categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT category FROM items ORDER BY category ASC;');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
