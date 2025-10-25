@@ -39,10 +39,10 @@
 }
 
 .date-range-container input[type="date"] {
-  padding: 6px 10px;
+  padding: 3px 6px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: 0.85rem;
   background: #f8f8f8;
   transition: border-color 0.2s;
 }

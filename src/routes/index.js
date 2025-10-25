@@ -78,6 +78,44 @@ router.get('/api/category_sales', async (req, res) => {
   }
 });
 
+// New API: category sales grouped by category and date
+router.get('/api/category_sales_by_date', async (req, res) => {
+  try {
+    const { start_date, end_date, category_name } = req.query;
+    let query = 'SELECT category_name, date, sum(total_item_price) as total_sales FROM sale_record';
+    const params = [];
+    let whereClauses = [];
+    let paramIdx = 1;
+    if (start_date && end_date) {
+      whereClauses.push(`date BETWEEN $${paramIdx} AND $${paramIdx + 1}`);
+      params.push(start_date, end_date);
+      paramIdx += 2;
+    } else if (start_date) {
+      whereClauses.push(`date >= $${paramIdx}`);
+      params.push(start_date);
+      paramIdx += 1;
+    } else if (end_date) {
+      whereClauses.push(`date <= $${paramIdx}`);
+      params.push(end_date);
+      paramIdx += 1;
+    }
+    if (category_name) {
+      whereClauses.push(`category_name = $${paramIdx}`);
+      params.push(category_name);
+      paramIdx += 1;
+    }
+    if (whereClauses.length) {
+      query += ' WHERE ' + whereClauses.join(' AND ');
+    }
+    query += ' GROUP BY category_name, date ORDER BY date DESC, category_name;';
+    // console.log('CATEGORY SALES BY DATE QUERY:', query, params);
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Serve the daywise sales HTML page
 router.get('/daywise_sales', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/daywise_sales.html'));

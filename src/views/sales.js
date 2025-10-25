@@ -214,8 +214,11 @@ function fetchCategorySalesData(startDate, endDate) {
                     let category = row["category_name"] || '';
                     let total = parseFloat(row["total_sales"]) || 0;
                     totalCategorySales += total;
+                    const startDateVal = document.getElementById('start-date')?.value || '';
+                    const endDateVal = document.getElementById('end-date')?.value || '';
+                    const categoryUrl = `/views/category_sales.html?category=${encodeURIComponent(category)}&start_date=${encodeURIComponent(startDateVal)}&end_date=${encodeURIComponent(endDateVal)}`;
                     bodyHtml += `<tr>`;
-                    bodyHtml += `<td>${category}</td>`;
+                    bodyHtml += `<td><a href="${categoryUrl}" class="category-link">${category}</a></td>`;
                     bodyHtml += `<td>${total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>`;
                     bodyHtml += '</tr>';
                 });
