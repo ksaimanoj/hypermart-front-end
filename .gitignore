@@ -95,3 +95,6 @@ public
 
 # VS Code settings
 .vscode/
+
+# JetBrains IDEs
+.idea/

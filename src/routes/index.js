@@ -25,7 +25,17 @@ const path = require('path');
 
 // Serve the sales HTML page
 router.get('/sales', (req, res) => {
-  res.sendFile(path.join(__dirname, '../views/sales.html'));
+  res.sendFile(path.join(__dirname, '../views/sales/sales.html'));
+});
+
+// Serve the file upload HTML page
+router.get('/upload_file', (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/upload-file/upload_file.html'));
+});
+
+// Serve the category sales HTML page
+router.get('/category_sales', (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/category-sales/category_sales.html'));
 });
 
 // API endpoint to get sales data as JSON
@@ -129,7 +139,7 @@ router.get('/api/categories', async (req, res) => {
 
 // Serve the daywise sales HTML page
 router.get('/daywise_sales', (req, res) => {
-  res.sendFile(path.join(__dirname, '../views/daywise_sales.html'));
+  res.sendFile(path.join(__dirname, '../views/daywise-sales/daywise_sales.html'));
 });
 
 // API endpoint to get daywise sales data as JSON

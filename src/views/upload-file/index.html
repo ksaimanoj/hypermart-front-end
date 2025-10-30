@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+    <link rel="stylesheet" href="/views/upload-file/upload_file.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Upload a File</h2>
+        <form id="uploadForm">
+            <label for="fileInput" class="file-label">
+                <span id="fileLabelText">Click to select a file</span>
+            </label>
+            <input type="file" name="file" id="fileInput" class="custom-file-input" required />
+            <div class="file-name" id="fileName"></div>
+            <button type="submit">Upload & Print</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+    <script src="/views/upload-file/upload_file.js"></script>
+</body>
+</html>
