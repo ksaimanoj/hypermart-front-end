@@ -216,7 +216,7 @@ function fetchCategorySalesData(startDate, endDate) {
                     totalCategorySales += total;
                     const startDateVal = document.getElementById('start-date')?.value || '';
                     const endDateVal = document.getElementById('end-date')?.value || '';
-                    const categoryUrl = `/views/category_sales.html?category=${encodeURIComponent(category)}&start_date=${encodeURIComponent(startDateVal)}&end_date=${encodeURIComponent(endDateVal)}`;
+                    const categoryUrl = `/views/category-sales/category_sales.html?category=${encodeURIComponent(category)}&start_date=${encodeURIComponent(startDateVal)}&end_date=${encodeURIComponent(endDateVal)}`;
                     bodyHtml += `<tr>`;
                     bodyHtml += `<td><a href="${categoryUrl}" class="category-link">${category}</a></td>`;
                     bodyHtml += `<td>${total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>`;
