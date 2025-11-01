@@ -70,4 +70,25 @@ router.get('/api/items', async (req, res) => {
     }
 });
 
+router.get('/api/categories', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT DISTINCT category FROM items ORDER BY category');
+        res.json({ categories: result.rows.map(r => r.category) });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post('/api/items/:id', async (req, res) => {
+    try {
+        // console.log('Update item category request body:', req.body);
+        const { id } = req.params;
+        const { category } = req.body;
+        await pool.query('UPDATE items SET category = $1 WHERE item_id = $2', [category, id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

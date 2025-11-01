@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const table = document.getElementById("items-table");
     const tbody = table.querySelector("tbody");
     const prevBtn = document.getElementById("prev-page");
@@ -13,6 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let totalItems = 0;
     let sortOption = 'item_id';
     let showUncatOnly = false;
+
+    async function fetchCategories() {
+        try {
+            const response = await fetch('/admin/api/categories');
+            const result = await response.json();
+            window.categories = result.categories;
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    }
 
     async function fetchItems(page = 1, sort = sortOption) {
         try {
@@ -39,12 +49,32 @@ document.addEventListener("DOMContentLoaded", () => {
             row.innerHTML = `
                 <td>${item.item_id}</td>
                 <td>${item.item_name}</td>
-                <td>${item.category}</td>
+                <td><input type="text" value="${item.category}" data-item-id="${item.item_id}" class="category-input" autocomplete="off" data-awesomplete="" /></td>
                 <td>${item.brand}</td>
                 <td>${item.total_sales !== undefined ? item.total_sales : ''}</td>
                 <td>${item.total_quantity !== undefined ? item.total_quantity : ''}</td>
             `;
             tbody.appendChild(row);
+        });
+        // Initialize Awesomplete for category inputs with better filtering
+        document.querySelectorAll('.category-input').forEach(input => {
+            const awesomplete = new Awesomplete(input, {
+                list: window.categories || [],
+                minChars: 0,
+                autoFirst: true,
+                filter: Awesomplete.FILTER_CONTAINS,
+                sort: false
+            });
+            // Show suggestions on focus and input
+            input.addEventListener('focus', () => {
+                input.select();
+                awesomplete.evaluate();
+                awesomplete.open();
+            });
+            input.addEventListener('input', () => {
+                awesomplete.evaluate();
+                awesomplete.open();
+            });
         });
         currentPage = page;
         totalPages = pages;
@@ -98,5 +128,38 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Handle category input changes
+    tbody.addEventListener('blur', async (e) => {
+        if (e.target.classList.contains('category-input')) {
+            const itemId = e.target.dataset.itemId;
+            const newCategory = e.target.value;
+            try {
+                const response = await fetch(`/admin/api/items/${itemId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: newCategory })
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to update category');
+                }
+                // Refresh categories and Awesomplete lists
+                await fetchCategories();
+                document.querySelectorAll('.category-input').forEach(input => {
+                    input.awesomplete = new Awesomplete(input, {
+                        list: window.categories || [],
+                        minChars: 0,
+                        autoFirst: true,
+                        filter: Awesomplete.FILTER_CONTAINS,
+                        sort: false
+                    });
+                });
+            } catch (error) {
+                console.error('Error updating category:', error);
+                // Optionally, revert the value or show error
+            }
+        }
+    }, true);
+
+    await fetchCategories();
     fetchItems(1, sortOption);
 });

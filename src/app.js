@@ -6,7 +6,9 @@ const routes = require('./routes/index');
 
 const fileHandler = require('./routes/file_handler');
 
+
 const app = express();
+app.use(express.json());
 app.use('/views', express.static(path.join(__dirname, 'views')));
 const PORT = process.env.PORT || 3000;
 

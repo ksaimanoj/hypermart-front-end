@@ -1,3 +1,7 @@
+/* Hide Awesomplete default hint */
+.awesomplete [hidden], .awesomplete .visually-hidden {
+    display: none !important;
+}
 @media (max-width: 600px) {
     .options-bar {
         flex-direction: column;
@@ -170,7 +174,73 @@ tr:hover td {
 }
 
 td {
-    color: #333;
+    color: #334155;
+    font-size: 0.95rem;
+}
+
+
+.category-input {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    width: 100%;
+    max-width: 180px;
+    min-width: 120px;
+    box-sizing: border-box;
+    padding: 7px 32px 7px 12px;
+    margin: 0;
+    font-size: 1rem;
+    color: #334155;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+    transition: border 0.2s, box-shadow 0.2s;
+    appearance: none;
+    position: relative;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%236366f1" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px 18px;
+}
+
+.category-input:focus {
+    outline: none;
+    border: 1.5px solid #6366f1;
+    background: #f8fafc;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+}
+
+
+.awesomplete {
+    position: relative;
+    width: 100%;
+}
+
+
+.awesomplete ul {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.07);
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-top: 2px;
+    padding: 4px 0;
+}
+
+
+.awesomplete li {
+    padding: 8px 18px;
+    cursor: pointer;
+    color: #334155;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+}
+
+
+.awesomplete li:hover, .awesomplete li[aria-selected="true"] {
+    background: #f8fafc;
+    color: #6366f1;
 }
 
 h2 {
