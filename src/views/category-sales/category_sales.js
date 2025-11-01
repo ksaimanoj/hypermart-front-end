@@ -105,8 +105,30 @@ window.onload = function() {
 };
 
 function renderCategorySales(data) {
+  // Calculate total sales
+  const totalSales = data.reduce((sum, row) => sum + parseFloat(row.total_sales || 0), 0);
+
+  // Calculate average sales based on the date range from start-date and end-date fields
+  const startDateInput = document.getElementById('start-date');
+  const endDateInput = document.getElementById('end-date');
+  const startDate = new Date(startDateInput.value);
+  const endDate = new Date(endDateInput.value);
+  const timeDiff = endDate - startDate;
+  const daysInRange = timeDiff >= 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1 : 0; // Include both start and end dates
+  const averageSales = daysInRange ? totalSales / daysInRange : 0;
+
+  // Update total and average sales in the summary section
+  const totalSalesElement = document.getElementById('total-category-sales');
+  const averageSalesElement = document.getElementById('average-category-sales');
+
+  if (totalSalesElement) {
+    totalSalesElement.textContent = `Total : ${totalSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+  }
+  if (averageSalesElement) {
+    averageSalesElement.textContent = `Average : ${averageSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+  }
+
   // Render chart and details for the category
-  // Table rendering: show all item values for each category
   const detailsDiv = document.getElementById('category-sales-details');
   let tableHtml = '<table style="width:100%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-radius:8px;overflow:hidden;">';
   tableHtml += '<thead><tr>';
@@ -118,7 +140,6 @@ function renderCategorySales(data) {
   tableHtml += '</tr></thead>';
   tableHtml += '<tbody>';
   data.forEach(row => {
-    const d = new Date(row.date);
     tableHtml += `<tr>`;
     tableHtml += `<td>${row.item_code}</td>`;
     tableHtml += `<td>${row.item_name}</td>`;
