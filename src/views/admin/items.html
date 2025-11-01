@@ -11,7 +11,13 @@
         <h1>Admin - Items</h1>
     </header>
     <main>
-        <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+        <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <fieldset style="border: none; margin-right: 24px;">
+                <legend style="font-weight: 600;">Sort by:</legend>
+                <label><input type="radio" name="sort-option" value="item_id" checked> Item ID</label>
+                <label><input type="radio" name="sort-option" value="sales"> Sales</label>
+                <label><input type="radio" name="sort-option" value="quantity"> Quantity</label>
+            </fieldset>
             <button id="prev-page" disabled>Previous</button>
             <span id="page-info">Page 1</span>
             <button id="next-page" disabled>Next</button>

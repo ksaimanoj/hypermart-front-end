@@ -11,10 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const pageSize = 100;
     let totalPages = 1;
     let totalItems = 0;
+    let sortOption = 'item_id';
 
-    async function fetchItems(page = 1) {
+    async function fetchItems(page = 1, sort = sortOption) {
         try {
-            const response = await fetch(`/admin/api/items?page=${page}&pageSize=${pageSize}`);
+            const response = await fetch(`/admin/api/items?page=${page}&pageSize=${pageSize}&sort=${sort}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -35,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${item.item_name}</td>
                 <td>${item.category}</td>
                 <td>${item.brand}</td>
+                <td>${item.total_sales !== undefined ? item.total_sales : ''}</td>
+                <td>${item.total_quantity !== undefined ? item.total_quantity : ''}</td>
             `;
             tbody.appendChild(row);
         });
@@ -50,20 +53,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     prevBtn.addEventListener("click", () => {
         if (currentPage > 1) {
-            fetchItems(currentPage - 1);
+            fetchItems(currentPage - 1, sortOption);
         }
     });
 
     nextBtn.addEventListener("click", () => {
         if (currentPage < totalPages) {
-            fetchItems(currentPage + 1);
+            fetchItems(currentPage + 1, sortOption);
         }
     });
 
     jumpBtn.addEventListener("click", () => {
         let page = parseInt(pageJumpInput.value, 10);
         if (!isNaN(page) && page >= 1 && page <= totalPages) {
-            fetchItems(page);
+            fetchItems(page, sortOption);
         }
     });
 
@@ -73,5 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    fetchItems(1);
+    // Listen for sort option change
+    document.querySelectorAll('input[name="sort-option"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            sortOption = e.target.value;
+            fetchItems(1, sortOption);
+        });
+    });
+
+    fetchItems(1, sortOption);
 });
