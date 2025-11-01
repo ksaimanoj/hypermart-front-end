@@ -11,19 +11,26 @@
         <h1>Admin - Items</h1>
     </header>
     <main>
-        <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <fieldset style="border: none; margin-right: 24px;">
-                <legend style="font-weight: 600;">Sort by:</legend>
-                <label><input type="radio" name="sort-option" value="item_id" checked> Item ID</label>
-                <label><input type="radio" name="sort-option" value="sales"> Sales</label>
-                <label><input type="radio" name="sort-option" value="quantity"> Quantity</label>
-            </fieldset>
-            <button id="prev-page" disabled>Previous</button>
-            <span id="page-info">Page 1</span>
-            <button id="next-page" disabled>Next</button>
-            <label for="page-jump" style="margin-left: 16px;">Jump to page:</label>
-            <input type="number" id="page-jump" min="1" style="width: 60px;">
-            <button id="jump-btn">Go</button>
+        <div class="options-bar">
+            <div class="options-group">
+                <label class="uncat-label">
+                    <input type="checkbox" id="show-uncat"> Show only uncategorized items
+                </label>
+                <fieldset class="sort-fieldset">
+                    <legend>Sort by:</legend>
+                    <label><input type="radio" name="sort-option" value="item_id" checked> Item ID</label>
+                    <label><input type="radio" name="sort-option" value="sales"> Sales</label>
+                    <label><input type="radio" name="sort-option" value="quantity"> Quantity</label>
+                </fieldset>
+            </div>
+            <div class="pagination-group">
+                <button id="prev-page" disabled>Previous</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page" disabled>Next</button>
+                <label for="page-jump" class="jump-label">Jump to page:</label>
+                <input type="number" id="page-jump" min="1" class="jump-input">
+                <button id="jump-btn">Go</button>
+            </div>
         </div>
         <table id="items-table">
             <thead>

@@ -12,7 +12,8 @@ router.get('/api/items', async (req, res) => {
         const page = parseInt(req.query.page, 10) || 1;
         const pageSize = parseInt(req.query.pageSize, 10) || 100;
         const offset = (page - 1) * pageSize;
-        const sort = req.query.sort || 'item_id';
+    const sort = req.query.sort || 'item_id';
+    const uncategorizedOnly = req.query.uncategorized === 'true';
 
         // Determine sort column
         let sortColumn = 'item_id';
@@ -37,18 +38,30 @@ router.get('/api/items', async (req, res) => {
             sortColumn = 'total_quantity';
         }
 
-        // Get total count
-        const countResult = await pool.query('SELECT COUNT(*) FROM items');
+        // Build WHERE clause for uncategorized filter
+        let whereClause = '';
+        let countParams = [];
+        let itemsParams = [pageSize, offset];
+        if (uncategorizedOnly) {
+            whereClause = `WHERE items.category = 'uncategorized'`;
+        }
+
+        // Get total count (with filter)
+        const countResult = await pool.query(
+            `SELECT COUNT(*) FROM items ${whereClause}`,
+            countParams
+        );
         const total = parseInt(countResult.rows[0].count, 10);
 
-        // Get paginated and sorted items
+        // Get paginated and sorted items (with filter)
         const itemsResult = await pool.query(
             `SELECT items.item_id, items.item_name, items.brand, items.category${selectExtra}
              FROM items
              ${sortJoin}
+             ${whereClause}
              ORDER BY ${sortColumn} DESC
              LIMIT $1 OFFSET $2`,
-            [pageSize, offset]
+            itemsParams
         );
 
         res.json({ items: itemsResult.rows, total });

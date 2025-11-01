@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let totalPages = 1;
     let totalItems = 0;
     let sortOption = 'item_id';
+    let showUncatOnly = false;
 
     async function fetchItems(page = 1, sort = sortOption) {
         try {
@@ -21,7 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             const result = await response.json();
             // result: { items: [...], total: n }
-            renderPage(result.items, page, Math.ceil(result.total / pageSize), result.total);
+            let items = result.items;
+            if (showUncatOnly) {
+                items = items.filter(item => item.category === 'uncategorized');
+            }
+            renderPage(items, page, Math.ceil(result.total / pageSize), result.total);
         } catch (error) {
             console.error('Error fetching items:', error);
         }
@@ -83,6 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
             fetchItems(1, sortOption);
         });
     });
+
+    // Checkbox for uncategorized filter
+    const showUncatCheckbox = document.getElementById('show-uncat');
+    if (showUncatCheckbox) {
+        showUncatCheckbox.addEventListener('change', (e) => {
+            showUncatOnly = e.target.checked;
+            fetchItems(1, sortOption);
+        });
+    }
 
     fetchItems(1, sortOption);
 });
