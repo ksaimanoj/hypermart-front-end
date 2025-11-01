@@ -1,23 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("items-table");
     const tbody = table.querySelector("tbody");
+    const prevBtn = document.getElementById("prev-page");
+    const nextBtn = document.getElementById("next-page");
+    const pageInfo = document.getElementById("page-info");
+    const pageJumpInput = document.getElementById("page-jump");
+    const jumpBtn = document.getElementById("jump-btn");
 
-    async function fetchItems() {
+    let currentPage = 1;
+    const pageSize = 100;
+    let totalPages = 1;
+    let totalItems = 0;
+
+    async function fetchItems(page = 1) {
         try {
-            const response = await fetch('/admin/api/items');
+            const response = await fetch(`/admin/api/items?page=${page}&pageSize=${pageSize}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const items = await response.json();
-            populateTable(items);
+            const result = await response.json();
+            // result: { items: [...], total: n }
+            renderPage(result.items, page, Math.ceil(result.total / pageSize), result.total);
         } catch (error) {
             console.error('Error fetching items:', error);
         }
     }
 
-    function populateTable(data) {
+    function renderPage(pageItems, page, pages, total) {
         tbody.innerHTML = "";
-        data.forEach(item => {
+        pageItems.forEach(item => {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${item.item_id}</td>
@@ -27,7 +38,40 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             tbody.appendChild(row);
         });
+        currentPage = page;
+        totalPages = pages;
+        totalItems = total;
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+        pageJumpInput.max = totalPages;
+        pageJumpInput.value = currentPage;
     }
 
-    fetchItems();
+    prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            fetchItems(currentPage - 1);
+        }
+    });
+
+    nextBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            fetchItems(currentPage + 1);
+        }
+    });
+
+    jumpBtn.addEventListener("click", () => {
+        let page = parseInt(pageJumpInput.value, 10);
+        if (!isNaN(page) && page >= 1 && page <= totalPages) {
+            fetchItems(page);
+        }
+    });
+
+    pageJumpInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            jumpBtn.click();
+        }
+    });
+
+    fetchItems(1);
 });

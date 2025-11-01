@@ -98,3 +98,5 @@ public
 
 # JetBrains IDEs
 .idea/
+
+resources/
