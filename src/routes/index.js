@@ -158,13 +158,14 @@ router.get('/api/daywise_sales', async (req, res) => {
   }
 });
 
-// router.get('/sales', async (req, res) => {
-//   try {
-//     const result = await pool.query('select date, sum(sr.total_item_price ) from sale_record sr group by date order by date desc;');
-//     res.json(result.rows);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
+// Admin Items Page Route
+router.get('/admin/items', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/admin/items.html'));
+});
+
+const adminRoutes = require('./admin');
+
+// Use admin routes
+router.use('/admin', adminRoutes);
 
 module.exports = router;
