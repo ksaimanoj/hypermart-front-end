@@ -142,17 +142,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (!response.ok) {
                     throw new Error('Failed to update category');
                 }
-                // Refresh categories and Awesomplete lists
-                await fetchCategories();
-                document.querySelectorAll('.category-input').forEach(input => {
-                    input.awesomplete = new Awesomplete(input, {
-                        list: window.categories || [],
-                        minChars: 0,
-                        autoFirst: true,
-                        filter: Awesomplete.FILTER_CONTAINS,
-                        sort: false
-                    });
-                });
             } catch (error) {
                 console.error('Error updating category:', error);
                 // Optionally, revert the value or show error
