@@ -1,4 +1,3 @@
-
 function fetchSalesData(startDate, endDate) {
     let url = '/api/sales';
     const params = [];
@@ -127,42 +126,56 @@ function fetchSalesData(startDate, endDate) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Set default date range to last 7 days
+    // Check if data is present in local storage
+    const salesDataKey = 'salesData';
+    const categorySalesDataKey = 'categorySalesData';
+    const startDateKey = 'startDate';
+    const endDateKey = 'endDate';
+
+    const storedSalesData = localStorage.getItem(salesDataKey);
+    const storedCategorySalesData = localStorage.getItem(categorySalesDataKey);
+    const storedStartDate = localStorage.getItem(startDateKey);
+    const storedEndDate = localStorage.getItem(endDateKey);
+
     const startDateInput = document.getElementById('start-date');
     const endDateInput = document.getElementById('end-date');
-    const today = new Date();
-    const lastWeek = new Date();
-    lastWeek.setDate(today.getDate() - 10);
-    const formatDate = d => d.toISOString().slice(0, 10);
+
     if (startDateInput && endDateInput) {
-        startDateInput.value = formatDate(lastWeek);
-        endDateInput.value = formatDate(today);
-        // Initial fetch with default range
+        // Set default date range to last 7 days if not in local storage
+        const today = new Date();
+        const lastWeek = new Date();
+        lastWeek.setDate(today.getDate() - 10);
+        const formatDate = d => d.toISOString().slice(0, 10);
+
+        startDateInput.value = storedStartDate || formatDate(lastWeek);
+        endDateInput.value = storedEndDate || formatDate(today);
+
+        // Save default values to local storage if not already stored
+        if (!storedStartDate) localStorage.setItem(startDateKey, startDateInput.value);
+        if (!storedEndDate) localStorage.setItem(endDateKey, endDateInput.value);
+
+        // Initial fetch with default or stored range
         fetchSalesData(startDateInput.value, endDateInput.value);
+        fetchCategorySalesData(startDateInput.value, endDateInput.value);
+
+        // Listen for changes on date inputs and update dashboard automatically
+        function updateDashboard() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            // Save updated values to local storage
+            localStorage.setItem(startDateKey, startDate);
+            localStorage.setItem(endDateKey, endDate);
+
+            fetchSalesData(startDate, endDate);
+            fetchCategorySalesData(startDate, endDate);
+        }
+
+        startDateInput.addEventListener('change', updateDashboard);
+        endDateInput.addEventListener('change', updateDashboard);
     } else {
         // Fallback: fetch all if inputs not found
         fetchSalesData();
-    }
-
-    // Listen for changes on date inputs and update dashboard automatically
-    function updateDashboard() {
-        const startDate = startDateInput ? startDateInput.value : '';
-        const endDate = endDateInput ? endDateInput.value : '';
-        fetchSalesData(startDate, endDate);
-        fetchCategorySalesData(startDate, endDate);
-    }
-
-    if (startDateInput) {
-        startDateInput.addEventListener('change', updateDashboard);
-    }
-    if (endDateInput) {
-        endDateInput.addEventListener('change', updateDashboard);
-    }
-
-    // Initial fetch for category sales
-    if (startDateInput && endDateInput) {
-        fetchCategorySalesData(startDateInput.value, endDateInput.value);
-    } else {
         fetchCategorySalesData();
     }
 });
@@ -183,7 +196,6 @@ function fetchCategorySalesData(startDate, endDate) {
             tbody.innerHTML = '';
 
             // Add show/hide button if needed
-            let showAll = false;
             let showBtn = document.getElementById('show-all-categories-btn');
             if (!showBtn) {
                 showBtn = document.createElement('button');

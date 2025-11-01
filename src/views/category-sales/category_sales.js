@@ -8,7 +8,10 @@ window.onload = function() {
   let allCategories = [];
   // Ensure input is available before initializing Awesomplete
   function initAwesomplete(categories) {
+    // Add 'Uncategorized' as a new entry
     allCategories = categories.map(cat => cat.category_name || cat.category);
+    allCategories.unshift('uncategorized');
+
     const input = document.getElementById('category-selection');
     if (input) {
       input.setAttribute('data-awesomplete', '');
@@ -56,6 +59,32 @@ window.onload = function() {
   if (endDate) {
     document.getElementById('end-date').value = endDate;
   }
+
+  const startDateKey = 'startDate';
+  const endDateKey = 'endDate';
+
+  const startDateInput = document.getElementById('start-date');
+  const endDateInput = document.getElementById('end-date');
+
+  // Load stored dates from local storage if available
+  const storedStartDate = localStorage.getItem(startDateKey);
+  const storedEndDate = localStorage.getItem(endDateKey);
+
+  if (storedStartDate) {
+    startDateInput.value = storedStartDate;
+  }
+  if (storedEndDate) {
+    endDateInput.value = storedEndDate;
+  }
+
+  // Save updated date values to local storage on change
+  startDateInput.addEventListener('change', function() {
+    localStorage.setItem(startDateKey, startDateInput.value);
+  });
+
+  endDateInput.addEventListener('change', function() {
+    localStorage.setItem(endDateKey, endDateInput.value);
+  });
 
   function fetchCategorySales() {
     const categoryVal = document.getElementById('category-selection').value;

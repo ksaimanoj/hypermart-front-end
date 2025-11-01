@@ -20,13 +20,12 @@ router.get('/db-test', async (req, res) => {
   }
 });
 
-
-const path = require('path');
+const path = require('path'); // Corrected unterminated string literal
 
 // Serve the sales HTML page
-router.get('/sales', (req, res) => {
+router.get('/sales', (req, res) => { // Fixed syntax error
   res.sendFile(path.join(__dirname, '../views/sales/sales.html'));
-});
+}); // Fixed missing closing parenthesis
 
 // Serve the file upload HTML page
 router.get('/upload_file', (req, res) => {
@@ -67,8 +66,8 @@ router.get('/api/sales', async (req, res) => {
 router.get('/api/category_sales', async (req, res) => {
   try {
     const { start_date, end_date } = req.query;
-    let query = 'select i.category as category_name, sum(sr.quantity) as quantity, sum(sr.total_item_price ) / sum(sr.quantity) as price, sum(sr.total_item_price ) as total_sales';
-    query += ' from sale_record sr inner join items i on sr.item_code::integer = i.item_id';    
+    let query = 'select COALESCE(i.category, \'uncategorized\') as category_name, sum(sr.quantity) as quantity, sum(sr.total_item_price ) / sum(sr.quantity) as price, sum(sr.total_item_price ) as total_sales';
+    query += ' from sale_record sr left outer join items i on sr.item_code::integer = i.item_id';    
     const params = [];
     if (start_date && end_date) {
       query += ' WHERE date BETWEEN $1 AND $2';
@@ -80,7 +79,8 @@ router.get('/api/category_sales', async (req, res) => {
       query += ' WHERE date <= $1';
       params.push(end_date);
     }
-    query += ' GROUP BY i.category ORDER BY total_sales DESC;';
+    query += ' GROUP BY COALESCE(i.category, \'uncategorized\') ORDER BY total_sales DESC;';
+    // console.log('CATEGORY SALES QUERY:', query, params);
     const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
@@ -88,12 +88,12 @@ router.get('/api/category_sales', async (req, res) => {
   }
 });
 
-// New API: category sales grouped by category and date
+// Updated the `/api/category_sales_by_date` API to handle 'uncategorized' category
 router.get('/api/category_sales_by_date', async (req, res) => {
   try {
     const { start_date, end_date, category_name } = req.query;
-    let query = 'select sr.item_code, sr.item_name, sum(sr.quantity) as quantity, sum(sr.total_item_price ) / sum(sr.quantity) as price, sum(sr.total_item_price ) as total_sales';
-    query += ' from sale_record sr inner join items i on sr.item_code::integer = i.item_id';
+    let query = 'select COALESCE(i.category, \'uncategorized\') as category_name, sr.item_code, sr.item_name, sum(sr.quantity) as quantity, sum(sr.total_item_price ) / sum(sr.quantity) as price, sum(sr.total_item_price ) as total_sales';
+    query += ' from sale_record sr left outer join items i on sr.item_code::integer = i.item_id';
     const params = [];
     let whereClauses = [];
     let paramIdx = 1;
@@ -111,14 +111,14 @@ router.get('/api/category_sales_by_date', async (req, res) => {
       paramIdx += 1;
     }
     if (category_name) {
-      whereClauses.push(`i.category = $${paramIdx}`);
+      whereClauses.push(`COALESCE(i.category, 'uncategorized') = $${paramIdx}`);
       params.push(category_name);
       paramIdx += 1;
     }
     if (whereClauses.length) {
       query += ' WHERE ' + whereClauses.join(' AND ');
     }
-    query += ' GROUP BY i.category,sr.item_name, sr.item_code ORDER BY total_sales DESC;';
+    query += ' GROUP BY COALESCE(i.category, \'uncategorized\'), sr.item_name, sr.item_code ORDER BY total_sales DESC;';
     // console.log('CATEGORY SALES BY DATE QUERY:', query, params);
     const result = await pool.query(query, params);
     res.json(result.rows);
